@@ -10,11 +10,20 @@ enum custom_keycodes {
   HSV_0_255_255,
   HSV_74_255_255,
   HSV_169_255_255,
+  // Sends the real Apple Globe/Fn key via Consumer Usage 0x029D
+  // (AC Keyboard Layout Select, per Apple's Accessory Design Guidelines) --
+  // NOT a spoofed Apple vendor/product ID, just the standard USB HID
+  // consumer usage macOS treats as the Globe key. Requires
+  // KEYBOARD_SHARED_EP = yes in rules.mk (see process_record_user below).
+  // Researched/decided 2026-07-20: replaces the earlier KC_F13 tap-dance
+  // (DANCE_0) approach -- F13 wasn't confirmed reliably supported by
+  // Wispr Flow (only modifier-combined function keys are documented as
+  // supported), and this gets you the REAL Globe key so macOS's own
+  // Dictation/Siri/emoji-picker bindings work too, not just one app.
+  CUSTOM_GLOBE,
 };
 
-
-
-#define DUAL_FUNC_0 LT(14, KC_F5)
+#define DUAL_FUNC_0 LT(8, KC_F6)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
@@ -32,7 +41,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_0
   ),
   [2] = LAYOUT_voyager(
-    RGB_TOG,        TOGGLE_LAYER_COLOR,RGB_MODE_FORWARD,RGB_SLD,        RGB_VAD,        RGB_VAI,                                        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, QK_BOOT,        
+    RGB_TOG,        TOGGLE_LAYER_COLOR,RGB_MODE_FORWARD,RGB_SLD,        RGB_VAD,        RGB_VAI,                                        CUSTOM_GLOBE,   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_AUDIO_VOL_DOWN,KC_AUDIO_VOL_UP,KC_AUDIO_MUTE,  KC_TRANSPARENT,                                 KC_PAGE_UP,     KC_HOME,        KC_UP,          KC_END,         KC_TRANSPARENT, KC_TRANSPARENT, 
     KC_TRANSPARENT, KC_MEDIA_PREV_TRACK,KC_MEDIA_NEXT_TRACK,KC_MEDIA_STOP,  KC_MEDIA_PLAY_PAUSE,KC_TRANSPARENT,                                 KC_PGDN,        KC_LEFT,        KC_DOWN,        KC_RIGHT,       KC_TRANSPARENT, KC_TRANSPARENT, 
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, HSV_0_255_255,  HSV_74_255_255, HSV_169_255_255,                                KC_TRANSPARENT, LCTL(LSFT(KC_TAB)),LCTL(KC_TAB),   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
@@ -61,7 +70,7 @@ const uint8_t PROGMEM ledmap[][RGB_MATRIX_LED_COUNT][3] = {
 
     [1] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {131,255,255}, {131,255,255}, {131,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {131,255,255}, {131,255,255}, {131,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {131,255,255}, {131,255,255}, {131,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {131,255,255} },
 
-    [2] = { {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,145,255}, {188,145,255}, {0,0,0}, {0,0,0}, {0,255,255}, {0,245,245}, {0,245,245}, {0,0,0}, {0,0,0}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,245,245}, {74,255,255}, {169,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,255,255}, {41,255,255}, {131,255,255}, {41,255,255}, {0,0,0}, {0,0,0}, {0,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {41,255,255}, {41,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
+    [2] = { {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,145,255}, {188,145,255}, {0,0,0}, {0,0,0}, {0,255,255}, {0,245,245}, {0,245,245}, {0,0,0}, {0,0,0}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,245,245}, {74,255,255}, {169,255,255}, {0,0,0}, {0,0,0}, {41,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,255,255}, {41,255,255}, {131,255,255}, {41,255,255}, {0,0,0}, {0,0,0}, {0,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {41,255,255}, {41,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
 
 };
 
@@ -111,8 +120,6 @@ bool rgb_matrix_indicators_user(void) {
 }
 
 
-
-
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
   case QK_MODS ... QK_MODS_MAX:
@@ -146,6 +153,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           unregister_code16(KC_ESCAPE);
         }  
       }  
+      return false;
+    case CUSTOM_GLOBE:
+      // Momentary consumer-page report, same pattern QMK uses for other
+      // consumer keys (e.g. KC_MEDIA_PLAY_PAUSE) -- press sends the usage,
+      // release clears it (0). No register_code/unregister_code exists for
+      // consumer usages; host_consumer_send(0) is the "key up" equivalent.
+      if (record->event.pressed) {
+        host_consumer_send(AC_NEXT_KEYBOARD_LAYOUT_SELECT);
+      } else {
+        host_consumer_send(0);
+      }
       return false;
     case RGB_SLD:
       if (record->event.pressed) {
