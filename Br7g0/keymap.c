@@ -15,16 +15,13 @@ enum custom_keycodes {
   // NOT a spoofed Apple vendor/product ID, just the standard USB HID
   // consumer usage macOS treats as the Globe key. Requires
   // KEYBOARD_SHARED_EP = yes in rules.mk (see process_record_user below).
+  // Researched/decided 2026-07-20: replaces the earlier KC_F13 tap-dance
+  // approach -- F13 wasn't confirmed reliably supported by Wispr Flow,
+  // while this gets the REAL Globe key so macOS Dictation/Siri/emoji-picker
+  // and app-level Globe/Fn bindings all see the expected key.
   // Auto-reapplied by scripts/hooks/zsa-globe-key-patch.py after every
   // Oryx fetch -- see zsa-voyager-keymap commit 56f780b for full history.
   CUSTOM_GLOBE,
-};
-
-
-
-enum tap_dance_codes {
-  DANCE_0,
-  DANCE_1,
 };
 
 #define DUAL_FUNC_0 LT(4, KC_F8)
@@ -45,7 +42,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_0
   ),
   [2] = LAYOUT_voyager(
-    RGB_TOG,        TOGGLE_LAYER_COLOR,RGB_MODE_FORWARD,RGB_SLD,        RGB_VAD,        RGB_VAI,                                        TD(DANCE_1),    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    RGB_TOG,        TOGGLE_LAYER_COLOR,RGB_MODE_FORWARD,RGB_SLD,        RGB_VAD,        RGB_VAI,                                        CUSTOM_GLOBE,   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_AUDIO_VOL_DOWN,KC_AUDIO_VOL_UP,KC_AUDIO_MUTE,  KC_TRANSPARENT,                                 KC_PAGE_UP,     KC_HOME,        KC_UP,          KC_END,         KC_TRANSPARENT, KC_TRANSPARENT, 
     KC_TRANSPARENT, KC_MEDIA_PREV_TRACK,KC_MEDIA_NEXT_TRACK,KC_MEDIA_STOP,  KC_MEDIA_PLAY_PAUSE,KC_TRANSPARENT,                                 KC_PGDN,        KC_LEFT,        KC_DOWN,        KC_RIGHT,       KC_TRANSPARENT, KC_TRANSPARENT, 
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, HSV_0_255_255,  HSV_74_255_255, HSV_169_255_255,                                KC_TRANSPARENT, LCTL(LSFT(KC_TAB)),LCTL(KC_TAB),   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 

@@ -11,6 +11,17 @@ Each time you run the GitHub Action, the workflow will:
 2. Merge them with any QMK features you've added in the source code.
 3. Build the firmware, incorporating modifications from both Oryx and your custom source code.
 
+## Real macOS Globe/Fn key on the Voyager
+
+This repo carries one non-Oryx QMK patch to make the Voyager send the real macOS `Fn`/`Globe` key instead of a fallback shortcut:
+
+- `Br7g0/keymap.c` defines `CUSTOM_GLOBE`
+- `process_record_user()` sends `host_consumer_send(AC_NEXT_KEYBOARD_LAYOUT_SELECT)` on press and clears it on release
+- `Br7g0/rules.mk` enables `KEYBOARD_SHARED_EP = yes`, which is required for that shared HID consumer report path
+- `scripts/hooks/zsa-globe-key-patch.py` reapplies the patch after every Oryx fetch, because Oryx regenerates `keymap.c` and `rules.mk`
+
+Why this approach exists: an earlier bare-`F13`/tap-dance workaround was not confirmed reliable for Wispr Flow, while the real consumer-usage Globe key gives macOS and apps the exact key they expect for Dictation, Siri, emoji picker, and Globe/Fn-triggered shortcuts.
+
 ## How to use
 
 1. Fork this repository (be sure to **uncheck the "Copy the main branch only" option**).
