@@ -23,6 +23,27 @@ This repo carries one non-Oryx QMK patch to make the Voyager send the real macOS
 
 Why this approach exists: an earlier bare-`F13`/tap-dance workaround was not confirmed reliable for Wispr Flow, while the real consumer-usage Globe key gives macOS and apps the exact key they expect for Dictation, Siri, emoji picker, and Globe/Fn-triggered shortcuts.
 
+## Operational findings
+
+- The firmware file you flash matters more than the repo commit you just made. On July 30, 2026, the approved remap had already been committed, but the first recovery flash used the older Mac download `voyager_Br7g0_zsa_voyager_Br7g0.bin`, which still embedded `Br7g0/jZ7yY7` from July 29, 2026. Result: the flash worked, but the keys stayed on the old layout. Always build a fresh artifact from the approved source before flashing layout changes.
+- If the Voyager appears unresponsive after a flash attempt, check whether it is in bootloader mode before assuming the board is dead. On macOS, `ioreg -p IOUSB -l -w 0 | egrep -i "Voyager|Bootloader|ZSA"` will show either `Voyager` or `Voyager Bootloader`.
+- While the board is in bootloader mode, `kontroll status` will typically report `No keyboard connected`. That is expected because Keymapp is talking to the normal keyboard firmware API, not the bootloader.
+- Layer highlighting for layers 1 and 2 is still implemented in firmware, but it is gated by the persistent `TOGGLE_LAYER_COLOR` setting. In this layout, `TOGGLE_LAYER_COLOR` lives on layer 2 in the top row immediately to the right of `RGB_TOG`. If layer highlighting disappears while the base RGB animation still works, toggle that key first.
+- The Mac-side flashing path is now Zapp-first. If `zapp` is installed, `scripts/hooks/zsa-firmware-check.sh --flash <firmware>` prefers `zapp flash <firmware>` and only falls back to opening `Keymapp` when `zapp` is unavailable.
+- Even with Zapp, the physical reset/bootloader transition is still manual. The host can stage the firmware, verify the Mac and Keymapp/Kontroll path, and wait for bootloader, but it cannot inject the reset press over USB with the public ZSA tooling.
+
+## Recovery checklist
+
+1. Verify the board state on the Mac:
+   - normal mode: `Voyager`
+   - bootloader mode: `Voyager Bootloader`
+2. If the board is in bootloader mode, flash the exact intended artifact:
+   - `zapp flash ~/Downloads/<firmware>.bin`
+3. If the board returns as normal `Voyager` but Keymapp still does not attach, run:
+   - `kontroll connect-any`
+   - `kontroll status`
+4. If layers 1 and 2 no longer highlight, toggle `TOGGLE_LAYER_COLOR` on layer 2 before changing firmware again.
+
 ## How to use
 
 1. Fork this repository (be sure to **uncheck the "Copy the main branch only" option**).
