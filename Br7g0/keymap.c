@@ -20,13 +20,6 @@ enum custom_keycodes {
   CUSTOM_GLOBE,
 };
 
-
-
-enum tap_dance_codes {
-  DANCE_0,
-  DANCE_1,
-};
-
 #define DUAL_FUNC_0 LT(4, KC_F8)
 #define DUAL_FUNC_1 LT(5, KC_F7)
 
@@ -101,13 +94,10 @@ bool rgb_matrix_indicators_user(void) {
   }
   if (!keyboard_config.disable_layer_led) { 
     switch (biton32(layer_state)) {
-      case 0:
-        set_layer_color(0);
-        break;
-      case 1:
+case 1:
         set_layer_color(1);
         break;
-      case 2:
+case 2:
         set_layer_color(2);
         break;
      default:
