@@ -17,6 +17,7 @@ This repo carries one non-Oryx QMK patch to make the Voyager send the real macOS
 
 - `Br7g0/keymap.c` defines `CUSTOM_GLOBE`
 - `process_record_user()` sends `host_consumer_send(AC_NEXT_KEYBOARD_LAYOUT_SELECT)` on press and clears it on release
+- the live layout exposes that real Globe/Fn behavior on layer 2 at the physical key whose base-layer legend is `6/^`
 - `Br7g0/rules.mk` enables `KEYBOARD_SHARED_EP = yes`, which is required for that shared HID consumer report path
 - `scripts/hooks/zsa-globe-key-patch.py` reapplies the patch after every Oryx fetch, because Oryx regenerates `keymap.c` and `rules.mk`
 
