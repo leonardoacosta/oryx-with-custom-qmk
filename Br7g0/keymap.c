@@ -20,8 +20,6 @@ enum custom_keycodes {
   CUSTOM_GLOBE,
 };
 
-
-
 #define DUAL_FUNC_0 LT(4, KC_F8)
 #define DUAL_FUNC_1 LT(5, KC_F7)
 
