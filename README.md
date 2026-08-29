@@ -23,6 +23,15 @@ This repo carries one non-Oryx QMK patch to make the Voyager send the real macOS
 
 Why this approach exists: an earlier bare-`F13`/tap-dance workaround was not confirmed reliable for Wispr Flow, while the real consumer-usage Globe key gives macOS and apps the exact key they expect for Dictation, Siri, emoji picker, and Globe/Fn-triggered shortcuts.
 
+## Layer 2 digit-row braces/brackets
+
+On layer 2 (Brd+Sys), the digit-row keys whose base-layer legends are `9` and `0` are remapped:
+
+- `9` -> `{` and `Shift+9` -> `[`
+- `0` -> `}` and `Shift+0` -> `]`
+
+This cannot live in the Oryx matrix: an Oryx cell can only emit one keycode (unshifted output plus its shifted self, which is how the earlier `KC_LBRC`/`KC_RBRC` matrix attempt in commit `1ba6917` behaved before the next Oryx fetch silently wiped it). The mapping therefore lives in `process_record_user()` in `Br7g0/keymap.c`, keyed on the resolved `KC_9`/`KC_0` while layer 2 is the highest active layer. Shift is cleared while the symbol is tapped so the shifted variant does not double-shift (`KC_LCBR`/`KC_RCBR` are already shifted keycodes), then restored. The same `scripts/hooks/zsa-globe-key-patch.py` hook that reapplies the Globe key also reinserts this block after every Oryx fetch; the two text blocks must stay byte-identical (enforced by `scripts/test-zsa-layer2-braces.sh`).
+
 ## Operational findings
 
 - The firmware file you flash matters more than the repo commit you just made. On July 30, 2026, the approved remap had already been committed, but the first recovery flash used the older Mac download `voyager_Br7g0_zsa_voyager_Br7g0.bin`, which still embedded `Br7g0/jZ7yY7` from July 29, 2026. Result: the flash worked, but the keys stayed on the old layout. Always build a fresh artifact from the approved source before flashing layout changes.

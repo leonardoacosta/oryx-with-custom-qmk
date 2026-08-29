@@ -22,11 +22,6 @@ enum custom_keycodes {
 
 
 
-enum tap_dance_codes {
-  DANCE_0,
-  DANCE_1,
-};
-
 #define DUAL_FUNC_0 LT(4, KC_F8)
 #define DUAL_FUNC_1 LT(5, KC_F7)
 
@@ -101,9 +96,6 @@ bool rgb_matrix_indicators_user(void) {
   }
   if (!keyboard_config.disable_layer_led) { 
     switch (biton32(layer_state)) {
-      case 0:
-        set_layer_color(0);
-        break;
       case 1:
         set_layer_color(1);
         break;
@@ -171,6 +163,31 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         unregister_code16(KC_ESCAPE);
       }
       return false;
+    case KC_9:
+    case KC_0:
+      // Layer 2 (Brd+Sys) digit-row braces/brackets: 9 -> { , 0 -> } ,
+      // Shift+9 -> [ , Shift+0 -> ]. Layer 2 leaves the 9/0 keys
+      // transparent over the base digits, so process_record_user sees the
+      // resolved KC_9/KC_0. Shift is cleared while tapping so the shifted
+      // variant does not double-shift (KC_LCBR/KC_RCBR are already shifted
+      // keycodes). Not in the Oryx matrix on purpose: Oryx fetches rewrite
+      // keymap.c, and this block is reinserted by
+      // scripts/hooks/zsa-globe-key-patch.py after every fetch.
+      if (get_highest_layer(layer_state) == 2) {
+        if (record->event.pressed) {
+          uint8_t braces_all_mods = get_mods();
+          bool braces_shifted = (braces_all_mods & MOD_MASK_SHIFT) != 0;
+          uint16_t braces_symbol = braces_shifted
+              ? (keycode == KC_9 ? KC_LBRC : KC_RBRC)
+              : (keycode == KC_9 ? KC_LCBR : KC_RCBR);
+          clear_mods();
+          tap_code16(braces_symbol);
+          set_mods(braces_all_mods);
+        }
+        return false;
+      }
+      break;
+
     case CUSTOM_GLOBE:
       // Momentary consumer-page report, same pattern QMK uses for other
       // consumer keys (e.g. KC_MEDIA_PLAY_PAUSE) -- press sends the usage,
